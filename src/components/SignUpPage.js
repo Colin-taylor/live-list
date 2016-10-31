@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React , { Component } from 'react'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -6,9 +7,22 @@ import RaisedButton from 'material-ui/RaisedButton';
 import firebase from 'firebase/app';
 require('firebase/auth');
 
-class AboutPage extends Component {
+const config = {
+    apiKey: "AIzaSyDpqkEhgrebz8r00mUklzve9Z7vYGsigps",
+    authDomain: "react-list-37a1e.firebaseapp.com",
+    databaseURL: "https://react-list-37a1e.firebaseio.com",
+    storageBucket: "react-list-37a1e.appspot.com",
+    messagingSenderId: "132861909433"
+  };
+class SignUpPage extends Component {
+    constructor(props) {
+        super(props)
+        //   firebase.initializeApp(config);
+          
+          this.provider = new firebase.auth.GoogleAuthProvider();
+    }
+
     render() {
-        // var provider = new firebase.auth.GoogleAuthProvider();
 
         return (
             <div className="content">
@@ -28,4 +42,4 @@ class AboutPage extends Component {
     }
 } 
 
-export default AboutPage;
+export default SignUpPage;
