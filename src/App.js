@@ -22,9 +22,20 @@ class App extends Component {
       autoBind(this);
       this.state = {};
       firebase.initializeApp(config);
-
     }
+    componentWillMount() {
+      console.log(this.props.router.push)
+      firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // User is signed in.
+    console.log(user)
+          this.props.router.push('/dashboard')
 
+  } else {
+    // No user is signed in.
+  }
+});
+    }
     render() {
         return (
         <MuiThemeProvider>
