@@ -6,14 +6,9 @@ import autoBind from 'react-autobind';
 import NavDrawer from './components/NavDrawer';
 import firebase from 'firebase/app';
 import auth from './auth';
+import config from './firebase.config'; 
 require('firebase/auth');
-const config = {
-    apiKey: "AIzaSyDpqkEhgrebz8r00mUklzve9Z7vYGsigps",
-    authDomain: "react-list-37a1e.firebaseapp.com",
-    databaseURL: "https://react-list-37a1e.firebaseio.com",
-    storageBucket: "react-list-37a1e.appspot.com",
-    messagingSenderId: "132861909433"
-  };
+
 // Needed for onTouchTap 
 
 injectTapEventPlugin();
@@ -22,22 +17,22 @@ class App extends Component {
       super(props)
       autoBind(this);
       this.state = {};
-      firebase.initializeApp(config);
+      console.log(firebase.auth().currentUser)
     }
-    componentWillMount() {
-      console.log(this.props.router.push)
-      firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    // User is signed in.
-    auth.currentUser = user;
-    console.log(user)
-          this.props.router.push('/dashboard')
+//     componentWillMount() {
+//       console.log(this.props.router.push)
+//       firebase.auth().onAuthStateChanged((user) => {
+//   if (user) {
+//     // User is signed in.
+//     auth.currentUser = user;
+//     console.log(user)
+//           this.props.router.push('/dashboard')
 
-  } else {
-    // No user is signed in.
-  }
-});
-    }
+//   } else {
+//     // No user is signed in.
+//   }
+// });
+//     }
     render() {
         return (
         <MuiThemeProvider>

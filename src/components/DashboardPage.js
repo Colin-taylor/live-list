@@ -9,7 +9,7 @@ class DashboardPage extends Component {
         };
     }
     componentDidMount() {
-        console.log(auth)
+
         //console.log('user is ' +JSON.stringify(this.state.user))
         
     }
