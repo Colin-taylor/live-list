@@ -5,6 +5,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import autoBind from 'react-autobind';
 import NavDrawer from './components/NavDrawer';
 import firebase from 'firebase/app';
+import auth from './auth';
 require('firebase/auth');
 const config = {
     apiKey: "AIzaSyDpqkEhgrebz8r00mUklzve9Z7vYGsigps",
@@ -28,6 +29,7 @@ class App extends Component {
       firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     // User is signed in.
+    auth.currentUser = user;
     console.log(user)
           this.props.router.push('/dashboard')
 

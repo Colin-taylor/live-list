@@ -5,11 +5,12 @@ class DashboardPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            user: auth.isLoggedIn(),
+            user: ''
         };
-        console.log('user is ' +JSON.stringify(this.state.user))
     }
     componentDidMount() {
+        console.log(auth)
+        //console.log('user is ' +JSON.stringify(this.state.user))
         
     }
     render() {
