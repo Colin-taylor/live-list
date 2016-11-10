@@ -17,7 +17,6 @@ class App extends Component {
       super(props)
       autoBind(this);
       this.state = {};
-      console.log(firebase.auth().currentUser)
     }
 //     componentWillMount() {
 //       console.log(this.props.router.push)
@@ -33,11 +32,23 @@ class App extends Component {
 //   }
 // });
 //     }
+  logOut() {
+    console.log('auth clickedd')
+      firebase.auth().signOut().then(() => {
+          // Sign-out successful.
+          console.log('auth succes')
+          this.props.router.push('/logout')
+          window.location.reload();
+        }, function(error) {
+          console.log('error was::::' +error)
+          // An error happened.
+        });
+  }
     render() {
         return (
         <MuiThemeProvider>
           <div>
-            <NavDrawer/>
+            <NavDrawer logout={this.logOut}/>
             <div className="content"> 
               {this.props.children}
             </div>

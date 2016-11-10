@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import IconButton from 'material-ui/IconButton';
 import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
+import auth from '../auth';
 const styles = {
     largeIcon: {
         fontSize: '3rem',
@@ -15,12 +16,14 @@ class HomePage extends Component {
         autoBind(this);
         
     }
-
+    componentWillMount() {
+        firebase.auth().onAuthStateChanged((user) => { 
+             if(user) this.props.router.push('/dashboard');
+        })
+    }
     componentDidMount() {
         this.initApp().then(res => {
-            console.log(`res is ${res}`)
             this.props.router.push('/dashboard')
-
         });
     }
     initApp() {
@@ -37,7 +40,6 @@ class HomePage extends Component {
           console.log(user)
           resolve(user)
         } else {
-            console.log('something else')
             reject('not logged in')
           // [END_EXCLUDE]
         }
@@ -66,6 +68,7 @@ class HomePage extends Component {
     }
     onSignUpClick() {
         var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
         provider.addScope('https://www.googleapis.com/auth/plus.login');
 
         firebase.auth().signInWithRedirect(provider);

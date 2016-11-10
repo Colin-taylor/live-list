@@ -1,12 +1,11 @@
-import React from 'react';
 import * as firebase from 'firebase';
 import config from './firebase.config.js';
 firebase.initializeApp(config);
-var user;
+var loggedInUser;
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
-    user = user;
+    loggedInUser = user;
     console.log(user)
   } else {
     // No user is signed in.
@@ -14,7 +13,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 });
 function requireAuth(nextState, replace) {
-    if(user === null) {
+    if(typeof loggedInUser === 'undefined') {
         replace({
           pathname: '/',
           state: { nextPathname: nextState.location.pathname }
