@@ -1,17 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import './App.css';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import autoBind from 'react-autobind';
 import NavDrawer from './components/NavDrawer';
 import firebase from 'firebase/app';
-import auth from './auth';
-import config from './firebase.config'; 
-require('firebase/auth');
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import muiBasePalette from './muiBasePalette';
+const muiTheme = getMuiTheme(muiBasePalette);
 
 // Needed for onTouchTap 
-
 injectTapEventPlugin();
+
 class App extends Component {
     constructor(props) {
       super(props)
@@ -46,7 +47,7 @@ class App extends Component {
   }
     render() {
         return (
-        <MuiThemeProvider>
+        <MuiThemeProvider muiTheme={muiTheme}>
           <div>
             <NavDrawer logout={this.logOut}/>
             <div className="content"> 
