@@ -1,12 +1,16 @@
+@import './_constants';
+@import './_alignmentutils';
 body {
   font-family: 'Roboto', sans-serif;
 }
 .content {
+  margin: 0 5%;
+}
+.flex-column-center {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .nav-overlay {
   position: fixed;
     height: 100%;
@@ -23,6 +27,6 @@ body {
     pointer-events: auto;
 }
 .active div {
-  background: rgb(0, 188, 212);
+  background: $accent1Color;
 }
   

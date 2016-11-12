@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import IconButton from 'material-ui/IconButton';
 import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
-import auth from '../auth';
 const styles = {
     largeIcon: {
         fontSize: '3rem',
@@ -48,11 +47,9 @@ class HomePage extends Component {
       }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
-        var errorMessage = error.message;
+        // var errorMessage = error.message;
         // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
+    
         // [START_EXCLUDE]
         if (errorCode === 'auth/account-exists-with-different-credential') {
           alert('You have already signed up with a different auth provider for that email.');

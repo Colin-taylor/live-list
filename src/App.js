@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import './App.css';
+import './scss/App.scss';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -9,7 +9,6 @@ import firebase from 'firebase/app';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import muiBasePalette from './muiBasePalette';
 const muiTheme = getMuiTheme(muiBasePalette);
-
 // Needed for onTouchTap 
 injectTapEventPlugin();
 
