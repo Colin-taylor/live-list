@@ -16,15 +16,17 @@ class HomePage extends Component {
         
     }
     componentWillMount() {
-        // firebase.auth().onAuthStateChanged((user) => { 
-        //      if(user) this.props.router.push('/dashboard');
-        // })
+        console.log('hello')
+        this.initApp().then(res => {
+            this.props.router.push('/dashboard')
+        }); 
     }
-    // componentDidMount() {
-    //     this.initApp().then(res => {
-    //         this.props.router.push('/dashboard')
-    //     });
-    // }
+    componentDidMount() {
+        firebase.auth().onAuthStateChanged((user) => { 
+             if(user) this.props.router.push('/dashboard');
+        });
+    }
+    
     initApp() {
         return new Promise((resolve, reject) => {
         firebase.auth().getRedirectResult().then(function(result) {
@@ -36,7 +38,7 @@ class HomePage extends Component {
               token,
               email
           }
-          console.log(user)
+          console.log(`there was a user:::   ${user}`)
           resolve(user)
         } else {
             reject('not logged in')

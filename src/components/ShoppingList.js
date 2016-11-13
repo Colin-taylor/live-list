@@ -9,7 +9,10 @@ const ShoppingList = (props) => {
         <MobileTearSheet>
             <List>
             {props.items.map((item, index) => (
-                <ListItem primaryText={item.name} key={index} />
+                <div>
+                    <ListItem primaryText={item.name} key={index} />
+                    <Divider/>
+                </div>
             ))}
             </List>
         </MobileTearSheet>

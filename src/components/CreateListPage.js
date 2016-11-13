@@ -56,7 +56,6 @@ class CreateListPage extends Component {
                         hintText="List Name"
                     />
                     <form onSubmit={this.addItem}>
-                        
                         <TextField
                             errorText={this.state.errorText}
                             hintText="Item"
