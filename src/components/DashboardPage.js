@@ -5,9 +5,12 @@ import firebase from 'firebase';
 import {EditorFormatListBulleted} from 'material-ui/svg-icons';
 import IconButton from 'material-ui/IconButton';
 import styles from '../IconStyles';
+import autobind from 'react-autobind';
+import {Link} from 'react-router';
 class DashboardPage extends Component {
     constructor(props) {
-        super(props)
+        super(props);
+        autobind(this);
         this.state = {
             user: ''
         };
@@ -20,9 +23,10 @@ class DashboardPage extends Component {
             });
         }
     }
+    handleListClick() {
+        this.props.router.push('/create-list');
+    }
     render() {
-        console.log(styles)
-        // const photoURL = 'https://api.adorable.io/avatars/135/abott@adorable.io.png';
         const {photoURL} = this.state.user;
         return (
             <div>
@@ -35,14 +39,17 @@ class DashboardPage extends Component {
                     size={30}
                  />
                 </section>
-                <section className="row">
-        <IconButton
-            className="col-xs-6"
-            iconStyle={styles.largeIcon}
-            style={styles.large}
-            toolTip={<span>List</span>}>
-            <EditorFormatListBulleted/>
-        </IconButton>
+                <section className="row center-xs">
+                <div className="col-xs-6">
+                    <Link to="create-list">
+                        <IconButton
+                            iconStyle={styles.largeIcon} 
+                            style={styles.large}
+                            tooltip={<span>List</span>}>
+                            <EditorFormatListBulleted/>
+                        </IconButton>
+                    </Link>
+                </div>
         <IconButton
             className="col-xs-6"
             iconStyle={styles.largeIcon}

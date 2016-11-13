@@ -16,15 +16,15 @@ class HomePage extends Component {
         
     }
     componentWillMount() {
-        firebase.auth().onAuthStateChanged((user) => { 
-             if(user) this.props.router.push('/dashboard');
-        })
+        // firebase.auth().onAuthStateChanged((user) => { 
+        //      if(user) this.props.router.push('/dashboard');
+        // })
     }
-    componentDidMount() {
-        this.initApp().then(res => {
-            this.props.router.push('/dashboard')
-        });
-    }
+    // componentDidMount() {
+    //     this.initApp().then(res => {
+    //         this.props.router.push('/dashboard')
+    //     });
+    // }
     initApp() {
         return new Promise((resolve, reject) => {
         firebase.auth().getRedirectResult().then(function(result) {
@@ -73,9 +73,9 @@ class HomePage extends Component {
     render() {
         return (
 
-            <div className="content">
+            <div className="content center-xs">
                 <h1>🦄🦄🦄🦄</h1>
-                Sign in
+                <h3>Sign in with Google</h3>
                     <IconButton iconClassName="fa fa-google"
                     iconStyle={styles.largeIcon}
                     onClick={this.onSignUpClick}
