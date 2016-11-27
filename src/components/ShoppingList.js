@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
-import {List, ListItem} from 'material-ui/List';
+
 // import Divider from 'material-ui/Divider';
 import Delete from 'material-ui/svg-icons/action/delete';
+import BlankCheck from 'material-ui/svg-icons/toggle/check-box-outline-blank';
+import Checkbox from 'material-ui/svg-icons/toggle/check-box';
 import MobileTearSheet from './MobileTearSheet';
 import autobind from 'react-autobind';
 
@@ -14,21 +16,33 @@ class ShoppingList extends Component {
     onDeleteClick(item) {
         this.props.onDeleteClick(item);
     }
+    onCheckClick(item) {
+        this.props.onCheckClick(item);
+    }
+    isCompleted(item) {
+        return item.completed ? 'line-through' : '';
+    }
     render() {
         return (
             <MobileTearSheet>
-                <List>
+                <ul className="list">
                 {this.props.items.map((item, index) => (
-                        <ListItem 
-                        primaryText={item.name} key={index}>
-                        <div className="row end-xs">
+                        <li key={index} className="row between-xs">
+                        {item.completed ? 
+                            <Checkbox onClick={() => this.onCheckClick(item)}/> 
+                        : 
+                        <BlankCheck
+                        onClick={() => this.onCheckClick(item)}
+                        />
+                        }
+                            <span className={this.isCompleted(item)}>{item.name}</span>
                             <Delete
-                            id={index} 
+                            className="delete-icon" 
                             onClick={() => this.onDeleteClick(item)}/>
-                        </div>
-                        </ListItem>
+                        
+                        </li>
                 ))}
-                </List>
+                </ul>
             </MobileTearSheet>
         );
     }

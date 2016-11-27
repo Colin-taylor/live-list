@@ -1,0 +1,21 @@
+@import './_constants';
+
+.list {
+    list-style: none;
+    li {
+        width: 100%;
+        padding: 2% 0;
+        border-bottom: 1px solid $accent1Color;
+    }
+}
+.delete-icon {
+    cursor: pointer;
+    &:hover {
+        background: 1px solid $primary3Color;
+        fill: $primary3Color;
+        border-radius: 50%;
+    }
+}
+.line-through {
+    text-decoration: line-through;
+}

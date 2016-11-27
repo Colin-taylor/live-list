@@ -8,6 +8,9 @@ import DashboardPage from './components/DashboardPage';
 import LogOutPage from './components/LogOutPage';
 import CreateListPage from './components/CreateListPage';
 import requireAuth from './auth';
+// to init
+import Rebase from './Rebase.config';
+
 export default (
     <Route path="/" component={App}> 
         <IndexRoute component={HomePage}/>

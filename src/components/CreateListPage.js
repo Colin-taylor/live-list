@@ -5,32 +5,39 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 import ShoppingList from './ShoppingList';
 import autobind from 'react-autobind';
 import firebase from 'firebase';
+import base from '../Rebase.config'; 
+
 class CreateListPage extends Component {
     constructor(props) {
         super(props);
         autobind(this);
         this.state = {
-            items: [{name: 'eggs', id: 1}],
+            items: [],
             itemToAdd: '',
             errorText: '',
-            user: undefined
+            user: firebase.auth().currentUser
         };
         // this.user = undefined;
         this.db = firebase.database();
     }
+    componentWillMount() {
+        if(!this.state.user) {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user){ 
+                    this.setState({
+                        user
+                    }) 
+                };
+            });
+        }
+    }
     componentDidMount() {
-     
-     firebase.database().ref('/items/').once('value').then((snapshot) => {
-        const items = snapshot.val();
-        var itemsArr = Object.keys(items).map((item, i) =>{  
-            return {name: items[item].name, id: i}
-            }   
-        )
-        console.log(items)
-         this.setState({
-             items: itemsArr,
-         });
+        base.syncState(`${this.state.user}/items`, {
+            context: this,
+            state: 'items',
+            asArray: true,
         });
+
     }
     addItem(e) {
         e.preventDefault();
@@ -44,7 +51,6 @@ class CreateListPage extends Component {
                 items: this.state.items.concat(newItem), 
                 itemToAdd: '',
             });
-            this.saveItems(newItem)
         } else {
             this.setState({
                 errorText: 'This field is required',
@@ -63,11 +69,20 @@ class CreateListPage extends Component {
             items: filteredItems,
         });
     }
-    saveItems(item){
-         firebase.database().ref('items/' + item.id).set({
-            name: item.name
+    onCheck(item) {
+        console.log(item)
+        const items = this.state.items.map(elem => {
+            if(item.id === elem.id ) {
+                console.log(elem.completed) 
+                elem.completed = !item.completed;
+            }
+            return elem;
+        });
+        this.setState({
+            items,
         })
     }
+    
     render () {
         const {items} = this.state;
         return (
@@ -102,6 +117,7 @@ class CreateListPage extends Component {
                             {items.length ? 
                             (<ShoppingList 
                                 items={items}
+                                onCheckClick={this.onCheck}
                                 onDeleteClick={this.onDelete}/>)
                             : undefined
                             }
