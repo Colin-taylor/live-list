@@ -9,6 +9,7 @@ import LogOutPage from './components/LogOutPage';
 import CreateListPage from './components/CreateListPage';
 import requireAuth from './auth';
 // to init
+// eslint-disable-next-line
 import Rebase from './Rebase.config';
 
 export default (

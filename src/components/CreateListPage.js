@@ -1,11 +1,20 @@
-import React, {Component} from 'react'
-import TextField from 'material-ui/TextField';
-import FlatButton from 'material-ui/FlatButton';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
+import React, {
+    Component
+} from 'react'
+// import FlatButton from 'material-ui/FlatButton';
+import {
+    Card,
+    CardText,
+    CardTitle,
+    Divider,
+    FlatButton,
+    TextField,
+} from 'material-ui';
+
 import ShoppingList from './ShoppingList';
 import autobind from 'react-autobind';
 import firebase from 'firebase';
-import base from '../Rebase.config'; 
+import base from '../Rebase.config';
 
 class CreateListPage extends Component {
     constructor(props) {
@@ -15,40 +24,37 @@ class CreateListPage extends Component {
             items: [],
             itemToAdd: '',
             errorText: '',
-            user: firebase.auth().currentUser
+            listName: this.props.location.state,
+            user: '',
         };
-        // this.user = undefined;
         this.db = firebase.database();
     }
-    componentWillMount() {
-        if(!this.state.user) {
-            firebase.auth().onAuthStateChanged(user => {
-                if (user){ 
-                    this.setState({
-                        user
-                    }) 
-                };
-            });
-        }
-    }
-    componentDidMount() {
-        base.syncState(`${this.state.user}/items`, {
-            context: this,
-            state: 'items',
-            asArray: true,
-        });
 
+    componentDidMount() {
+        firebase.auth().onAuthStateChanged(user => {
+            
+            if (user) {
+                this.setState({
+                    user
+                });
+                base.syncState(`${user.uid}/lists/${this.state.listName}/items`, {
+                    context: this,
+                    state: 'items',
+                    asArray: true,
+                });
+            };
+        });
     }
     addItem(e) {
         e.preventDefault();
-        if(this.state.itemToAdd) {
+        if (this.state.itemToAdd) {
 
             const newItem = {
                 name: this.state.itemToAdd,
                 id: Date.now()
             };
             this.setState({
-                items: this.state.items.concat(newItem), 
+                items: this.state.items.concat(newItem),
                 itemToAdd: '',
             });
         } else {
@@ -70,17 +76,15 @@ class CreateListPage extends Component {
         });
     }
     onCheck(item) {
-        console.log(item)
         const items = this.state.items.map(elem => {
-            if(item.id === elem.id ) {
-                console.log(elem.completed) 
+            if (item.id === elem.id) {
                 elem.completed = !item.completed;
             }
             return elem;
         });
         this.setState({
             items,
-        })
+        });
     }
     
     render () {
@@ -93,13 +97,9 @@ class CreateListPage extends Component {
                 <div className="row center-xs">
                 <aside className="col-xs-12 col-md-4">
                 <Card>
-                    <CardHeader
-                    title="Shopping List"                    
-                    />
+                    <CardTitle title={this.state.listName}/>
                  <CardText>
-                    <TextField
-                        hintText="List Name"
-                    />
+                    <Divider/>
                     <form onSubmit={this.addItem} className="flex-column-center">
                         <TextField
                             errorText={this.state.errorText}

@@ -1,5 +1,5 @@
 import * as firebase from 'firebase';
-import config from './firebase.config.js';
+// import config from './firebase.config.js';
 // firebase.initializeApp(config);
 
 function requireAuth(nextState, replace) {

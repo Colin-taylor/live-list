@@ -1,33 +1,134 @@
 import React, {Component} from 'react';
 // import auth from '../auth';
-import Avatar from 'material-ui/Avatar';
+import colors from '../muiBasePalette';
 import firebase from 'firebase';
-import {EditorFormatListBulleted} from 'material-ui/svg-icons';
-import IconButton from 'material-ui/IconButton';
+import {
+    EditorFormatListBulleted, 
+    ContentCreate,
+    NavigationMoreVert,
+    ActionDelete,
+    } from 'material-ui/svg-icons';  
+import {Avatar,
+        Dialog,
+        FlatButton,
+        IconButton,
+        IconMenu,
+        MenuItem,
+        List,
+        ListItem,
+        TextField, } from 'material-ui';
+
 import styles from '../IconStyles';
 import autobind from 'react-autobind';
-import {Link} from 'react-router';
+
+import base from '../Rebase.config';
+
+const iconButtonElement = (
+  <IconButton
+    touch={true}
+    tooltip="more"
+    tooltipPosition="bottom-left"
+  >
+    <NavigationMoreVert/>
+  </IconButton>
+);
+
+
+
 class DashboardPage extends Component {
     constructor(props) {
         super(props);
         autobind(this);
         this.state = {
-            user: ''
+            user: '',
+            showForm: false,
+            listName: '',
+            errorText: '',
+            lists: [],
+            deleteDialogOpen: false,
         };
     }
     componentWillMount() {
-        const user = firebase.auth().currentUser;
-        if(user) {
-            this.setState({
-                user: user,
-            });
-        }
+        // const user = firebase.auth().currentUser;
+        firebase.auth().onAuthStateChanged(user => { 
+            if(user) {
+                this.setState({
+                    user,
+                });
+                console.log(`${user.uid}`)
+                base.syncState(`${user.uid}/lists`, {
+                    context: this,
+                    state: 'lists',
+                    // then(lists) {
+                    //     console.log(lists)
+                    //     this.setState({ lists })
+                    // }
+                });
+            }
+        })
     }
-    handleListClick() {
-        this.props.router.push('/create-list');
+    deleteActions() {
+        return ([
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onTouchTap={() => this.setState({deleteDialogOpen: false})}
+                />,
+            <FlatButton
+                label="Delete"
+                primary={true}
+                onTouchTap={this.handleDelete}
+                />,
+        ]);
+    } 
+    rightIconMenu (itemToDelete) {
+        return (
+            <IconMenu iconButtonElement={iconButtonElement}>
+                <MenuItem>Share</MenuItem>
+                <MenuItem onTouchTap={() => this.setState({deleteDialogOpen: true, itemToDelete})}>Delete</MenuItem>
+            </IconMenu>
+        );
     }
+    handleDelete () {
+        console.log(this.state.itemToDelete)
+        const {itemToDelete, lists} = this.state;
+        console.log(Object.keys(lists))
+        const newLists = Object.keys(lists).filter((list) => (
+            console.log(lists)
+            //  list !== itemToDelete
+             ));
+        // this.setState({
+        //     lists: newLists,
+        // })
+    }
+    handleListNameChange(e) {
+        this.setState({
+            listName: e.target.value,
+            errorText: '',
+        });
+    }
+    handleSubmit(e) {
+        e.preventDefault();
+        const {user, listName} = this.state;
+        console.log(`${user.uid}/${listName}`)
+        base.fetch(`${user.uid}/lists/${listName}`, {
+            context: this,
+            asArray: true,
+            then(data) {
+                if(!data.length) {
+                    this.props.router.push({ pathname: 'create-list', state: listName})
+                } else {
+                    this.setState({
+                        errorText: 'This name is already in use.',
+                    });
+                }
+            }
+        })
+    }
+
     render() {
-        const {photoURL} = this.state.user;
+
+        const {deleteDialogOpen, showForm, user, lists} = this.state;
         return (
             <div>
                 <section className="row center-xs">
@@ -35,29 +136,57 @@ class DashboardPage extends Component {
                 </section>
                 <section className="row center-xs">
                  <Avatar
-                    src={photoURL}
+                    src={user.photoURL}
                     size={30}
                  />
                 </section>
                 <section className="row center-xs">
                 <div className="col-xs-6">
-                    <Link to="create-list">
-                        <IconButton
-                            iconStyle={styles.largeIcon} 
+                    <IconButton
+                            iconStyle={styles.largeIcon}
+                            onClick={() => this.setState({ showForm: true})} 
                             style={styles.large}
-                            tooltip={<span>List</span>}>
-                            <EditorFormatListBulleted/>
-                        </IconButton>
-                    </Link>
+                            tooltip={<span>Create List</span>}>
+                            <ContentCreate/>
+                    </IconButton>
+                    {showForm ?
+                        <form onSubmit={(e)=>this.handleSubmit(e)} className="flex-column-center">
+                        <TextField
+                            errorText={this.state.errorText}
+                            hintText="List Name"
+                            onChange={this.handleListNameChange}
+                            value={this.state.listName}
+                        />
+                            <FlatButton label="Create List" />
+                    </form> 
+                    : undefined }
+
+                        
                 </div>
-        <IconButton
-            className="col-xs-6"
-            iconStyle={styles.largeIcon}
-            style={styles.large}>
-            <EditorFormatListBulleted/>
-        </IconButton>
+        <div className="col-xs-6">
+            {lists ? 
+            <List>
+                {Object.keys(lists).map(list => (
+                    <ListItem 
+                        key={list}
+                        onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list})}
+                        primaryText={list}
+                        rightIconButton={this.rightIconMenu(list)}
+                    />
+                ))}
+            </List>
+             : <EditorFormatListBulleted style={styles.largeIcon}/>}
+        </div>
         </section>
-            </div>
+          <Dialog
+          actions={this.deleteActions()}
+          modal={false}
+          open={deleteDialogOpen}
+          onRequestClose={() => this.setState({deleteDialogOpen: false})}
+        >
+          Delete this list?
+        </Dialog>
+    </div>
         );
     }
 }
