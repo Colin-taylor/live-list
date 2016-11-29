@@ -2,3 +2,4 @@ node_modules
 jsconfig.json
 build
 .vscode
+.DS_Store

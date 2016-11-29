@@ -8,6 +8,7 @@ import Eject from 'material-ui/svg-icons/action/eject';
 import autoBind from 'react-autobind';
 import { Link, IndexLink } from 'react-router';
 import firebase from 'firebase';
+
 class NavDrawer extends Component {
     constructor(props) {
       super(props)
@@ -48,8 +49,8 @@ class NavDrawer extends Component {
               onClick={this.props.logout}
               secondary={true} />
            : undefined}
-          onLeftIconButtonTouchTap={ this.onOpenClick }
-          title="Title"
+          onLeftIconButtonTouchTap={(e) => {e.preventDefault();  this.onOpenClick() }}
+          title="List App"
         />
         <Drawer open={this.state.open}>
             { this.state.user ?
@@ -60,10 +61,9 @@ class NavDrawer extends Component {
              <IndexLink activeClassName="active" to="/">
                 <MenuItem>Home</MenuItem>
               </IndexLink> }
-          <Link activeClassName="active" to="about">
-            <MenuItem>About</MenuItem>
-          </Link>
-        
+              <Link activeClassName="active" to="about">
+                <MenuItem>About</MenuItem>
+              </Link>
           <Link activeClassName="active" to="courses">
             <MenuItem>CoursesPage</MenuItem>
           </Link>
