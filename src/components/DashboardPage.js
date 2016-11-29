@@ -92,7 +92,7 @@ class DashboardPage extends Component {
     handleDelete () {
         console.log(this.state.itemToDelete)
         const {itemToDelete, lists} = this.state;
-        console.log(Object.keys(lists))
+        console.log(lists)
         const newLists = Object.keys(lists).filter((list) => (
             console.log(lists)
             //  list !== itemToDelete
