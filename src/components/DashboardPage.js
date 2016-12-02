@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 // import auth from '../auth';
 import colors from '../muiBasePalette';
+import uuid from 'node-uuid'; 
+
 import firebase from 'firebase';
 import {
     EditorFormatListBulleted, 
@@ -10,12 +12,15 @@ import {
     } from 'material-ui/svg-icons';  
 import {Avatar,
         Dialog,
+        Divider,
         FlatButton,
         IconButton,
         IconMenu,
-        MenuItem,
         List,
         ListItem,
+        MenuItem,
+        Paper,
+        RaisedButton,
         TextField, } from 'material-ui';
 
 import styles from '../IconStyles';
@@ -46,6 +51,7 @@ class DashboardPage extends Component {
             errorText: '',
             lists: [],
             deleteDialogOpen: false,
+            loading: true,
         };
     }
     componentWillMount() {
@@ -59,10 +65,15 @@ class DashboardPage extends Component {
                 base.syncState(`${user.uid}/lists`, {
                     context: this,
                     state: 'lists',
-                    // then(lists) {
-                    //     console.log(lists)
-                    //     this.setState({ lists })
-                    // }
+                    asArray: true,
+                    then() {
+                        const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
+                        
+                        this.setState({
+                            loading: false,
+                            lists: sorted,
+                        })
+                    }
                 });
             }
         })
@@ -92,7 +103,7 @@ class DashboardPage extends Component {
     handleDelete () {
         console.log(this.state.itemToDelete)
         const {itemToDelete, lists} = this.state;
-        console.log(lists)
+        console.log('list are::::   ' + lists)
         const newLists = Object.keys(lists).filter((list) => (
             console.log(lists)
             //  list !== itemToDelete
@@ -109,21 +120,41 @@ class DashboardPage extends Component {
     }
     handleSubmit(e) {
         e.preventDefault();
-        const {user, listName} = this.state;
-        console.log(`${user.uid}/${listName}`)
-        base.fetch(`${user.uid}/lists/${listName}`, {
-            context: this,
-            asArray: true,
-            then(data) {
-                if(!data.length) {
-                    this.props.router.push({ pathname: 'create-list', state: listName})
-                } else {
-                    this.setState({
+        const {user, listName, lists} = this.state;
+        const dup = lists.filter(list => list.name === listName);
+        const context = this;
+
+        if(!dup.length) {
+            const list = {
+                key: uuid.v4(),
+                name: listName,
+            }
+            base.post(`${user.uid}/lists/${list.key}`, {
+                data: {name: listName, dateCreated: Date.now()},
+                then()  {
+                    context.props.router.push({ pathname: 'create-list', state: list});
+                }
+            })
+
+        } else {
+             this.setState({
                         errorText: 'This name is already in use.',
                     });
-                }
-            }
-        })
+        }
+
+        // base.fetch(`${user.uid}/lists/${listName}`, {
+        //     context: this,
+        //     asArray: true,
+        //     then(data) {
+        //         if(!data.length) {
+        //             this.props.router.push({ pathname: 'create-list', state: listName})
+        //         } else {
+        //             this.setState({
+        //                 errorText: 'This name is already in use.',
+        //             });
+        //         }
+        //     }
+        // })
     }
 
     render() {
@@ -141,10 +172,10 @@ class DashboardPage extends Component {
                  />
                 </section>
                 <section className="row center-xs">
-                <div className="col-xs-6">
+                <div className="col-xs-12 col-lg-6">
                     <IconButton
                             iconStyle={styles.largeIcon}
-                            onClick={() => this.setState({ showForm: true})} 
+                            onClick={() => this.setState({ showForm: !showForm})} 
                             style={styles.large}
                             tooltip={<span>Create List</span>}>
                             <ContentCreate/>
@@ -157,24 +188,28 @@ class DashboardPage extends Component {
                             onChange={this.handleListNameChange}
                             value={this.state.listName}
                         />
-                            <FlatButton label="Create List" />
-                    </form> 
+                            <RaisedButton label="Create List" primary={true} style={{marginBottom: '2%'}}/>
+                    </form>
                     : undefined }
 
                         
                 </div>
-        <div className="col-xs-6">
-            {lists ? 
+        <div className="col-xs-12 col-lg-6">
+            {lists ?
+            <Paper zDepth={1}>
             <List>
-                {Object.keys(lists).map(list => (
+                <h4>Your Lists</h4>
+                <Divider/>
+                {lists.map(list => (
                     <ListItem 
-                        key={list}
+                        key={uuid.v4()}
                         onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list})}
-                        primaryText={list}
+                        primaryText={list.name}
                         rightIconButton={this.rightIconMenu(list)}
                     />
                 ))}
             </List>
+            </Paper>
              : <EditorFormatListBulleted style={styles.largeIcon}/>}
         </div>
         </section>

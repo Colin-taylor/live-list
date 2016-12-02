@@ -1,6 +1,7 @@
 import React, {
     Component
 } from 'react'
+import uuid from 'node-uuid'; 
 // import FlatButton from 'material-ui/FlatButton';
 import {
     Card,
@@ -24,10 +25,12 @@ class CreateListPage extends Component {
             items: [],
             itemToAdd: '',
             errorText: '',
-            listName: this.props.location.state,
+            list: this.props.location.state,
             user: '',
         };
         this.db = firebase.database();
+        console.log('listname is' + JSON.stringify(this.state.list))
+        //debugger;
     }
 
     componentDidMount() {
@@ -37,7 +40,7 @@ class CreateListPage extends Component {
                 this.setState({
                     user
                 });
-                base.syncState(`${user.uid}/lists/${this.state.listName}/items`, {
+                base.syncState(`${user.uid}/lists/${this.state.list.key}/items`, {
                     context: this,
                     state: 'items',
                     asArray: true,
@@ -88,7 +91,8 @@ class CreateListPage extends Component {
     }
     
     render () {
-        const {items} = this.state;
+        const {items, list} = this.state;
+        console.log('list is;;;;;'+list)
         return (
             <div>
                 <div className="row center-xs">
@@ -97,7 +101,7 @@ class CreateListPage extends Component {
                 <div className="row center-xs">
                 <aside className="col-xs-12 col-md-4">
                 <Card>
-                    <CardTitle title={this.state.listName}/>
+                    <CardTitle title={list.name}/>
                  <CardText>
                     <Divider/>
                     <form onSubmit={this.addItem} className="flex-column-center">
