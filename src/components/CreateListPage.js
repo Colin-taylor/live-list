@@ -1,7 +1,7 @@
 import React, {
     Component
 } from 'react'
-import uuid from 'node-uuid'; 
+// import uuid from 'node-uuid'; 
 // import FlatButton from 'material-ui/FlatButton';
 import {
     Card,
@@ -40,13 +40,16 @@ class CreateListPage extends Component {
                 this.setState({
                     user
                 });
-                base.syncState(`${user.uid}/lists/${this.state.list.key}/items`, {
+             this.ref = base.syncState(`${user.uid}/lists/${this.state.list.key}/items`, {
                     context: this,
                     state: 'items',
                     asArray: true,
                 });
             };
         });
+    }
+    componentWillUnmount(){
+        base.removeBinding(this.ref);
     }
     addItem(e) {
         e.preventDefault();

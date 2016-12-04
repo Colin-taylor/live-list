@@ -7,11 +7,11 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import MobileTearSheet from './MobileTearSheet';
 import autobind from 'react-autobind';
 
-const DeleteButton = (props) => (
-    <IconButton onClick={props.onDeleteClick}>
-        <Delete/>
-    </IconButton>
-);
+// const DeleteButton = (props) => (
+//     <IconButton onClick={props.onDeleteClick}>
+//         <Delete/>
+//     </IconButton>
+// );
 
 class ShoppingList extends Component {
     constructor(props) {

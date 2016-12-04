@@ -45,7 +45,7 @@ class DashboardPage extends Component {
         super(props);
         autobind(this);
         this.state = {
-            user: '',
+            user: firebase.auth().currentUser,
             showForm: false,
             listName: '',
             errorText: '',
@@ -53,31 +53,43 @@ class DashboardPage extends Component {
             deleteDialogOpen: false,
             loading: true,
         };
+        this.hasStateSynced = false;
     }
     componentWillMount() {
-        // const user = firebase.auth().currentUser;
-        firebase.auth().onAuthStateChanged(user => { 
-            if(user) {
-                this.setState({
-                    user,
-                });
-                console.log(`${user.uid}`)
-                base.syncState(`${user.uid}/lists`, {
-                    context: this,
-                    state: 'lists',
-                    asArray: true,
-                    then() {
-                        const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
-                        
-                        this.setState({
-                            loading: false,
-                            lists: sorted,
-                        })
-                    }
-                });
-            }
-        })
+        if(!this.state.user) {
+            firebase.auth().onAuthStateChanged(user => { 
+                if(user) {
+                    console.log(`auth state user ${user}`)
+                    this.setState({
+                        user,
+                    });
+                     this.syncState();
+                }
+            })
+
+        } else {
+            this.syncState();
+        }
     }
+    syncState() {
+        if(!this.hasStateSynced) {
+            this.hasStateSynced = true;
+            const {user} = this.state;
+            console.log('state has been synced')
+            this.ref = base.syncState(`${user.uid}/lists`, {
+                        context: this,
+                        state: 'lists',
+                        asArray: true,
+                        then() {
+                            //const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
+                        }
+                    });
+        }
+    }
+    componentWillUnmount(){
+        base.removeBinding(this.ref);
+    }
+    
     deleteActions() {
         return ([
             <FlatButton
@@ -104,13 +116,11 @@ class DashboardPage extends Component {
         console.log(this.state.itemToDelete)
         const {itemToDelete, lists} = this.state;
         console.log('list are::::   ' + lists)
-        const newLists = Object.keys(lists).filter((list) => (
-            console.log(lists)
-            //  list !== itemToDelete
-             ));
-        // this.setState({
-        //     lists: newLists,
-        // })
+        // const newLists = 
+        this.setState({
+            lists: lists.filter(list => list.key !== itemToDelete.key),
+        });
+        this.setState({deleteDialogOpen: false});
     }
     handleListNameChange(e) {
         this.setState({
@@ -166,10 +176,7 @@ class DashboardPage extends Component {
                     <h1 className="text-center">DashboardPage</h1>
                 </section>
                 <section className="row center-xs">
-                 <Avatar
-                    src={user.photoURL}
-                    size={30}
-                 />
+           
                 </section>
                 <section className="row center-xs">
                 <div className="col-xs-12 col-lg-6">
