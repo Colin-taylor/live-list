@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import IconButton from 'material-ui/IconButton';
 import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
+import base from '../Rebase.config';
 const styles = {
     largeIcon: {
         fontSize: '3rem',
@@ -17,9 +18,7 @@ class HomePage extends Component {
     }
     componentWillMount() {
         console.log('hello')
-        this.initApp().then(res => {
-            this.props.router.push('/dashboard')
-        }); 
+        this.initApp().then(user => this.addUserObj(user)); 
     }
     componentDidMount() {
         firebase.auth().onAuthStateChanged((user) => { 
@@ -38,8 +37,8 @@ class HomePage extends Component {
               token,
               email
           }
-          console.log(`there was a user:::   ${user}`)
-          resolve(user)
+          console.log(`there was a user:::   ${JSON.stringify(result.user)}`)
+          resolve(result.user)
         } else {
             reject('not logged in')
           // [END_EXCLUDE]
@@ -65,7 +64,19 @@ class HomePage extends Component {
       });
       })
     }
-    onSignUpClick() {
+    addUserObj(user) {
+        let context = this;
+        let {email, uid} = user; 
+        base.post(`users/${uid}`, {
+            data: {email: user.email},
+            then(err){
+             if(!err){
+                context.props.router.push('/dashboard')
+            }
+        } 
+        });
+    }
+    onSignUpClick() { 
         var provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope('email');
         provider.addScope('https://www.googleapis.com/auth/plus.login');

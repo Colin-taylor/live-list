@@ -202,7 +202,7 @@ class DashboardPage extends Component {
                         
                 </div>
         <div className="col-xs-12 col-lg-6">
-            {lists ?
+            {lists.length ?
             <Paper zDepth={1}>
             <List>
                 <h4>Your Lists</h4>
@@ -217,7 +217,7 @@ class DashboardPage extends Component {
                 ))}
             </List>
             </Paper>
-             : <EditorFormatListBulleted style={styles.largeIcon}/>}
+             : <h4>You have no lists.</h4>}
         </div>
         </section>
           <Dialog
