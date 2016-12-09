@@ -9,6 +9,7 @@ import {
     ContentCreate,
     NavigationMoreVert,
     ActionDelete,
+    SocialPersonAdd,
     } from 'material-ui/svg-icons';  
 import {Avatar,
         Dialog,
@@ -47,9 +48,12 @@ class DashboardPage extends Component {
         this.state = {
             user: firebase.auth().currentUser,
             showForm: false,
+            showFindFriendForm: false,
+            friendEmail: '',
             listName: '',
             errorText: '',
             lists: [],
+            searchResults: [],
             deleteDialogOpen: false,
             loading: true,
         };
@@ -122,9 +126,9 @@ class DashboardPage extends Component {
         });
         this.setState({deleteDialogOpen: false});
     }
-    handleListNameChange(e) {
+    handleInputChange(e, stateProp) {
         this.setState({
-            listName: e.target.value,
+            [stateProp]: e.target.value,
             errorText: '',
         });
     }
@@ -133,7 +137,7 @@ class DashboardPage extends Component {
         const {user, listName, lists} = this.state;
         const dup = lists.filter(list => list.name === listName);
         const context = this;
-
+    
         if(!dup.length) {
             const list = {
                 key: uuid.v4(),
@@ -152,24 +156,27 @@ class DashboardPage extends Component {
                     });
         }
 
-        // base.fetch(`${user.uid}/lists/${listName}`, {
-        //     context: this,
-        //     asArray: true,
-        //     then(data) {
-        //         if(!data.length) {
-        //             this.props.router.push({ pathname: 'create-list', state: listName})
-        //         } else {
-        //             this.setState({
-        //                 errorText: 'This name is already in use.',
-        //             });
-        //         }
-        //     }
-        // })
+
+    }
+    handleFriendEmailSubmit(e) {
+        e.preventDefault();
+        base.fetch('users', {
+            context: this,
+            asArray: true,
+            then(data){
+                console.log(data);
+                this.setState({ 
+                    searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
+                    showFindFriendForm: false,
+                });
+            }
+        })
+        console.log(this.state.friendEmail)
     }
 
     render() {
 
-        const {deleteDialogOpen, showForm, user, lists} = this.state;
+        const {deleteDialogOpen, showForm, user, lists, showFindFriendForm, searchResults} = this.state;
         return (
             <div>
                 <section className="row center-xs">
@@ -192,10 +199,10 @@ class DashboardPage extends Component {
                         <TextField
                             errorText={this.state.errorText}
                             hintText="List Name"
-                            onChange={this.handleListNameChange}
+                            onChange={(e) =>this.handleInputChange(e,'listName')}
                             value={this.state.listName}
                         />
-                            <RaisedButton label="Create List" primary={true} style={{marginBottom: '2%'}}/>
+                            <RaisedButton onClick={(e)=>this.handleSubmit(e)} label="Create List" primary={true} style={{margin: '4% 0',}}/>
                     </form>
                     : undefined }
 
@@ -219,6 +226,38 @@ class DashboardPage extends Component {
             </Paper>
              : <h4>You have no lists.</h4>}
         </div>
+        </section>
+        <section className="row center-xs">
+                <div className="col-xs-12 col-lg-6">
+                   <IconButton
+                            iconStyle={styles.largeIcon}
+                            onClick={() => this.setState({ showFindFriendForm: !showFindFriendForm})} 
+                            style={styles.large}
+                            tooltip={<span>Find a Friend</span>}>
+                            <SocialPersonAdd/>
+                    </IconButton>
+                     {showFindFriendForm ?
+                        <form onSubmit={(e)=>this.handleFriendEmailSubmit(e)} className="flex-column-center">
+                        <TextField
+                            errorText={this.state.errorText}
+                            hintText="Friend's email address"
+                            onChange={(e) =>this.handleInputChange(e,'friendEmail')}
+                            value={this.state.friendEmail}
+                        />
+                            <RaisedButton label="Search" primary={true} style={{marginBottom: '2%'}}/>
+                    </form>
+                    : undefined }
+                    <div>
+                    {searchResults.length ?
+                    <List> 
+                        {searchResults.map(p => (
+                            <ListItem key={uuid.v4()}
+                                      primaryText={p.email}/>
+                        ))}
+                        </List>
+                        : undefined}
+                        </div>
+                    </div>
         </section>
           <Dialog
           actions={this.deleteActions()}
