@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 // import auth from '../auth';
 import colors from '../muiBasePalette';
 import uuid from 'node-uuid'; 
-
+import FriendSearch from './FriendSearch';
 import firebase from 'firebase';
 import {
     EditorFormatListBulleted, 
@@ -158,25 +158,11 @@ class DashboardPage extends Component {
 
 
     }
-    handleFriendEmailSubmit(e) {
-        e.preventDefault();
-        base.fetch('users', {
-            context: this,
-            asArray: true,
-            then(data){
-                console.log(data);
-                this.setState({ 
-                    searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
-                    showFindFriendForm: false,
-                });
-            }
-        })
-        console.log(this.state.friendEmail)
-    }
+
 
     render() {
 
-        const {deleteDialogOpen, showForm, user, lists, showFindFriendForm, searchResults} = this.state;
+        const {deleteDialogOpen, showForm, user, lists} = this.state;
         return (
             <div>
                 <section className="row center-xs">
@@ -227,38 +213,7 @@ class DashboardPage extends Component {
              : <h4>You have no lists.</h4>}
         </div>
         </section>
-        <section className="row center-xs">
-                <div className="col-xs-12 col-lg-6">
-                   <IconButton
-                            iconStyle={styles.largeIcon}
-                            onClick={() => this.setState({ showFindFriendForm: !showFindFriendForm})} 
-                            style={styles.large}
-                            tooltip={<span>Find a Friend</span>}>
-                            <SocialPersonAdd/>
-                    </IconButton>
-                     {showFindFriendForm ?
-                        <form onSubmit={(e)=>this.handleFriendEmailSubmit(e)} className="flex-column-center">
-                        <TextField
-                            errorText={this.state.errorText}
-                            hintText="Friend's email address"
-                            onChange={(e) =>this.handleInputChange(e,'friendEmail')}
-                            value={this.state.friendEmail}
-                        />
-                            <RaisedButton label="Search" primary={true} style={{marginBottom: '2%'}}/>
-                    </form>
-                    : undefined }
-                    <div>
-                    {searchResults.length ?
-                    <List> 
-                        {searchResults.map(p => (
-                            <ListItem key={uuid.v4()}
-                                      primaryText={p.email}/>
-                        ))}
-                        </List>
-                        : undefined}
-                        </div>
-                    </div>
-        </section>
+        <FriendSearch/>
           <Dialog
           actions={this.deleteActions()}
           modal={false}
