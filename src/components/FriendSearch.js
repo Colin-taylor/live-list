@@ -33,7 +33,7 @@ class FriendSearch extends Component {
         this.state = {
             showFindFriendForm: false,
             searchResults: [],
-            friendEmail: '',
+            selectedFriend: '',
             dataSource: []
         }
     }
@@ -64,8 +64,8 @@ class FriendSearch extends Component {
             }
         })
     }
-    onSelectFriend(e) {
-        console.log(e)
+    onSelectFriend(friend) {
+        this.setState({ selectedFriend: friend, });
     }
     handleInputChange(e, stateProp) {
         this.setState({
@@ -73,44 +73,26 @@ class FriendSearch extends Component {
             errorText: '',
         });
     }
-    handleFriendEmailSubmit(e) {
+    handleFriendSubmit(e) {
         e.preventDefault();
-    
-        console.log(this.state.friendEmail)
+        this.props.handleFriendSelection(this.state.selectedFriend)
+        // console.log(this.state.selectedFriend)
     }
     render () {
-        const {showFindFriendForm, searchResults} = this.state;
         return (
-           <section className="row center-xs">
-                <div className="col-xs-12 col-lg-6">
-                   <IconButton
-                            iconStyle={styles.largeIcon}
-                            onClick={() => this.setState({ showFindFriendForm: !showFindFriendForm})} 
-                            style={styles.large}
-                            tooltip={<span>Find a Friend</span>}>
-                            <SocialPersonAdd/>
-                    </IconButton>
-                     {showFindFriendForm ?
-                        <form onSubmit={(e)=>this.handleFriendEmailSubmit(e)} className="flex-column-center">
-                          <AutoComplete
-                            hintText="Type anything"
+            <div className="row">
+                <AutoComplete
+                            hintText="Enter friend's email"
                             dataSource={this.state.dataSource}
                             onUpdateInput={(e) => console.log(e)}
                         />
-                    </form>
-                    : undefined }
-                    <div>
-                    {searchResults.length ?
-                    <List> 
-                        {searchResults.map(p => (
-                            <ListItem key={uuid.v4()}
-                                      primaryText={p.email}/>
-                        ))}
-                        </List>
-                        : undefined}
-                        </div>
-                    </div>
-        </section>
+                <FlatButton
+                        label="Share"
+                        primary={true}
+                        onTouchTap={this.handleFriendSubmit}
+                    />
+            </div>
+           
         )
     }
 }

@@ -8,6 +8,7 @@ import {
     EditorFormatListBulleted, 
     ContentCreate,
     NavigationMoreVert,
+    NavigationClose,
     ActionDelete,
     SocialShare,
     SocialPersonAdd,
@@ -108,6 +109,34 @@ class DashboardPage extends Component {
                 onTouchTap={this.handleDelete}
                 />,
         ]);
+    }
+    handleFriendSelection(input) {
+        console.log('from the dboard    '+input)
+    }
+    nestedMenuItems(list, user) {
+        //   leftIcon={<SocialShare/>}
+        return ([
+            <ListItem key={uuid.v4()}  
+                      rightIconButton={<IconButton onClick={() => this.editMenuOpen(list, false)}>
+                                            <NavigationClose />
+                                        </IconButton>}>
+                <div className="row center-xs">
+                    <FriendSearch 
+                        handleFriendSelection={this.handleFriendSelection} 
+                        user={user}/>
+                </div>
+            </ListItem>
+        ]);
+    }
+    editMenuOpen(item, bool){
+        const {lists} = this.state;
+        
+        this.setState({
+            lists: lists.map(list => {
+                        if(list.key === item.key) list.isOpen = bool;
+                        return list;
+                }),
+        })
     }
     openMenuItemToShare(item) {
         const {lists} = this.state;
@@ -216,9 +245,7 @@ class DashboardPage extends Component {
                 {lists.map(list => (
                     <ListItem 
                         key={uuid.v4()}
-                        nestedItems={[
-                            <ListItem key={uuid.v4()} primaryText="Drafts" leftIcon={<SocialShare/>} />,
-                        ]}
+                        nestedItems={this.nestedMenuItems(list,user)}
                         onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list})}
                         open={list.isOpen}
                         primaryText={list.name}
