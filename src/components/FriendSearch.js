@@ -33,18 +33,20 @@ class FriendSearch extends Component {
         this.state = {
             showFindFriendForm: false,
             searchResults: [],
-            friendEmail: '',
+            selectedFriend: '',
             dataSource: []
         }
     }
-    componentWillMount() {
+    componentDidMount() {
+            const {user} = this.props;
             base.fetch('users', {
             context: this,
             asArray: true,
             then(data){
                 console.log(data);
                 this.setState({
-                    dataSource: data.map(i => (
+                    dataSource: data.filter(i => i.email !== user.email )
+                    .map(i => (
                          {
                             text: i.email,
                             value: (
@@ -55,7 +57,7 @@ class FriendSearch extends Component {
                             />
                             ),
                         }
-                        )) 
+                        )), 
                     // searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
                     // showFindFriendForm: false,
                 });
@@ -63,9 +65,8 @@ class FriendSearch extends Component {
         })
     }
     onSelectFriend(friend) {
-        this.setState({
-            friend: friend
-        })
+
+        this.setState({ selectedFriend: friend, });
     }
     handleInputChange(e, stateProp) {
         this.setState({
@@ -73,51 +74,26 @@ class FriendSearch extends Component {
             errorText: '',
         });
     }
-    handleFriendEmailSubmit(e) {
+    handleFriendSubmit(e) {
         e.preventDefault();
-    
-        console.log(this.state.friendEmail)
+        this.props.handleFriendSelection(this.state.selectedFriend)
+        // console.log(this.state.selectedFriend)
     }
     render () {
-        const {showFindFriendForm, searchResults} = this.state;
         return (
-           <section className="row center-xs">
-                <div className="col-xs-12 col-lg-6">
-                   <IconButton
-                            iconStyle={styles.largeIcon}
-                            onClick={() => this.setState({ showFindFriendForm: !showFindFriendForm})} 
-                            style={styles.large}
-                            tooltip={<span>Find a Friend</span>}>
-                            <SocialPersonAdd/>
-                    </IconButton>
-                     {showFindFriendForm ?
-                        <form onSubmit={(e)=>this.handleFriendEmailSubmit(e)} className="flex-column-center">
-                          <AutoComplete
-                            hintText="Type anything"
+            <div className="row">
+                <AutoComplete
+                            hintText="Enter friend's email"
                             dataSource={this.state.dataSource}
                             onUpdateInput={(e) => console.log(e)}
                         />
-                        <TextField
-                            errorText={this.state.errorText}
-                            hintText="Friend's email address"
-                            onChange={(e) =>this.handleInputChange(e,'friendEmail')}
-                            value={this.state.friendEmail}
-                        />
-                            <RaisedButton label="Search" primary={true} style={{marginBottom: '2%'}}/>
-                    </form>
-                    : undefined }
-                    <div>
-                    {searchResults.length ?
-                    <List> 
-                        {searchResults.map(p => (
-                            <ListItem key={uuid.v4()}
-                                      primaryText={p.email}/>
-                        ))}
-                        </List>
-                        : undefined}
-                        </div>
-                    </div>
-        </section>
+                <FlatButton
+                        label="Share"
+                        primary={true}
+                        onTouchTap={this.handleFriendSubmit}
+                    />
+            </div>
+           
         )
     }
 }
