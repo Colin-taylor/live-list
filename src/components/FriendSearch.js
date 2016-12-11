@@ -37,14 +37,16 @@ class FriendSearch extends Component {
             dataSource: []
         }
     }
-    componentWillMount() {
+    componentDidMount() {
+            const {user} = this.props;
             base.fetch('users', {
             context: this,
             asArray: true,
             then(data){
                 console.log(data);
                 this.setState({
-                    dataSource: data.map(i => (
+                    dataSource: data.filter(i => i.email !== user.email )
+                    .map(i => (
                          {
                             text: i.email,
                             value: (
@@ -55,7 +57,7 @@ class FriendSearch extends Component {
                             />
                             ),
                         }
-                        )) 
+                        )), 
                     // searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
                     // showFindFriendForm: false,
                 });
@@ -95,13 +97,6 @@ class FriendSearch extends Component {
                             dataSource={this.state.dataSource}
                             onUpdateInput={(e) => console.log(e)}
                         />
-                        <TextField
-                            errorText={this.state.errorText}
-                            hintText="Friend's email address"
-                            onChange={(e) =>this.handleInputChange(e,'friendEmail')}
-                            value={this.state.friendEmail}
-                        />
-                            <RaisedButton label="Search" primary={true} style={{marginBottom: '2%'}}/>
                     </form>
                     : undefined }
                     <div>

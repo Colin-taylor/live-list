@@ -9,6 +9,7 @@ import {
     ContentCreate,
     NavigationMoreVert,
     ActionDelete,
+    SocialShare,
     SocialPersonAdd,
     } from 'material-ui/svg-icons';  
 import {Avatar,
@@ -63,7 +64,7 @@ class DashboardPage extends Component {
         if(!this.state.user) {
             firebase.auth().onAuthStateChanged(user => { 
                 if(user) {
-                    console.log(`auth state user ${user}`)
+                    console.log(`auth state user ${user.email}`)
                     this.setState({
                         user,
                     });
@@ -107,24 +108,32 @@ class DashboardPage extends Component {
                 onTouchTap={this.handleDelete}
                 />,
         ]);
+    }
+    openMenuItemToShare(item) {
+        const {lists} = this.state;
+        console.log('item is::: ' + item)
+        const editedLists = lists.map(list => {
+                if(list.key === item.key) list.isOpen = true
+                return list;
+        });
+        this.setState({
+            lists: editedLists
+        })
     } 
-    rightIconMenu (itemToDelete) {
+    rightIconMenu (item) {
         return (
             <IconMenu iconButtonElement={iconButtonElement}>
-                <MenuItem>Share</MenuItem>
-                <MenuItem onTouchTap={() => this.setState({deleteDialogOpen: true, itemToDelete})}>Delete</MenuItem>
+                <MenuItem onTouchTap={() => this.openMenuItemToShare(item)}>Share</MenuItem>
+                <MenuItem onTouchTap={() => this.setState({deleteDialogOpen: true, item})}>Delete</MenuItem>
             </IconMenu>
         );
     }
     handleDelete () {
-        console.log(this.state.itemToDelete)
         const {itemToDelete, lists} = this.state;
-        console.log('list are::::   ' + lists)
-        // const newLists = 
         this.setState({
             lists: lists.filter(list => list.key !== itemToDelete.key),
+            deleteDialogOpen: false
         });
-        this.setState({deleteDialogOpen: false});
     }
     handleInputChange(e, stateProp) {
         this.setState({
@@ -135,6 +144,10 @@ class DashboardPage extends Component {
     handleSubmit(e) {
         e.preventDefault();
         const {user, listName, lists} = this.state;
+        if(!listName) {
+            this.setState({ errorText: 'This field is required',});
+            return;
+        }
         const dup = lists.filter(list => list.name === listName);
         const context = this;
     
@@ -203,7 +216,11 @@ class DashboardPage extends Component {
                 {lists.map(list => (
                     <ListItem 
                         key={uuid.v4()}
+                        nestedItems={[
+                            <ListItem key={uuid.v4()} primaryText="Drafts" leftIcon={<SocialShare/>} />,
+                        ]}
                         onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list})}
+                        open={list.isOpen}
                         primaryText={list.name}
                         rightIconButton={this.rightIconMenu(list)}
                     />
@@ -213,7 +230,8 @@ class DashboardPage extends Component {
              : <h4>You have no lists.</h4>}
         </div>
         </section>
-        <FriendSearch/>
+        {user ? <FriendSearch user={user}/> : undefined}
+        
           <Dialog
           actions={this.deleteActions()}
           modal={false}
