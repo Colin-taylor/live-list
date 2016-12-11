@@ -4,6 +4,7 @@ import colors from '../muiBasePalette';
 import uuid from 'node-uuid'; 
 import FriendSearch from './FriendSearch';
 import firebase from 'firebase';
+
 import {
     EditorFormatListBulleted, 
     ContentCreate,
@@ -17,6 +18,7 @@ import {Avatar,
         FlatButton,
         IconButton,
         IconMenu,
+        LinearProgress,
         List,
         ListItem,
         MenuItem,
@@ -51,11 +53,11 @@ class DashboardPage extends Component {
             showFindFriendForm: false,
             friendEmail: '',
             listName: '',
+            loading: true,
             errorText: '',
             lists: [],
             searchResults: [],
             deleteDialogOpen: false,
-            loading: true,
         };
         this.hasStateSynced = false;
     }
@@ -85,6 +87,7 @@ class DashboardPage extends Component {
                         state: 'lists',
                         asArray: true,
                         then() {
+                            this.setState({ loading: false });
                             //const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
                         }
                     });
@@ -162,7 +165,7 @@ class DashboardPage extends Component {
 
     render() {
 
-        const {deleteDialogOpen, showForm, user, lists} = this.state;
+        const {deleteDialogOpen, showForm, loading, lists} = this.state;
         return (
             <div>
                 <section className="row center-xs">
@@ -195,6 +198,7 @@ class DashboardPage extends Component {
                         
                 </div>
         <div className="col-xs-12 col-lg-6">
+         {loading ? <LinearProgress mode="indeterminate" /> : undefined}
             {lists.length ?
             <Paper zDepth={1}>
             <List>

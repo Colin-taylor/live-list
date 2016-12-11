@@ -62,8 +62,10 @@ class FriendSearch extends Component {
             }
         })
     }
-    onSelectFriend(e) {
-        console.log(e)
+    onSelectFriend(friend) {
+        this.setState({
+            friend: friend
+        })
     }
     handleInputChange(e, stateProp) {
         this.setState({
