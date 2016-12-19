@@ -36,19 +36,19 @@ class FriendSearch extends Component {
             selectedFriend: '',
             dataSource: []
         }
+        this.isUnmounted = false;
     }
     componentDidMount() {
             const {user} = this.props;
-            base.fetch('users', {
+        base.fetch('users', {
             context: this,
             asArray: true,
-            then(data){
-                console.log(data);
-                this.setState({
-                    dataSource: data.filter(i => i.email !== user.email )
-                    .map(i => (
+        }).then(data => {
+                   const dataSource = data.filter(i => i.email !== user.email )
+                     .map(i => { 
+                         return (
                          {
-                            text: i.email,
+                            text: i.email.toLowerCase(),
                             value: (
                             <MenuItem
                                 primaryText={i.email}
@@ -57,15 +57,21 @@ class FriendSearch extends Component {
                             />
                             ),
                         }
-                        )), 
-                    // searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
-                    // showFindFriendForm: false,
-                });
-            }
-        })
+                     )});
+                if(!this.isUnmounted) {
+                    this.setState({
+                        dataSource 
+                        // searchResults: data.filter(i => i.email === this.state.friendEmail.trim()),
+                        // showFindFriendForm: false,
+                    });
+                }
+        }).catch(error => console.error(error))
     }
-    onSelectFriend(friend) {
+    componentWillUnmount() {
+        this.isUnmounted = true;
+    }
 
+    onSelectFriend(friend) {
         this.setState({ selectedFriend: friend, });
     }
     handleInputChange(e, stateProp) {
@@ -85,6 +91,7 @@ class FriendSearch extends Component {
                 <AutoComplete
                             hintText="Enter friend's email"
                             dataSource={this.state.dataSource}
+                            filter={(searchText, key) => searchText !== '' && key.indexOf(searchText.toLowerCase()) !== -1}
                             onUpdateInput={(e) => console.log(e)}
                         />
                 <FlatButton

@@ -114,7 +114,7 @@ class DashboardPage extends Component {
         ]);
     }
     handleFriendSelection(input) {
-        console.log('from the dboard    '+input)
+        console.log('from the dboard    '+ input.email)
     }
     nestedMenuItems(list, user) {
         //   leftIcon={<SocialShare/>}
@@ -258,7 +258,8 @@ class DashboardPage extends Component {
                 ))}
             </List>
             </Paper>
-             : <h4>You have no lists.</h4>}
+             : undefined}
+             {!loading && !lists.length ? <h4>You have no lists.</h4> : undefined}
         </div>
         </section>
         
