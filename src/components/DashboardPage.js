@@ -114,7 +114,11 @@ class DashboardPage extends Component {
         ]);
     }
     handleFriendSelection(input) {
-        console.log('from the dboard    '+ input.email)
+            const {user} = this.state;
+           return base.post(`${input.key}/shared/`, {
+                data: {friend: user.email, key: user.uid },
+            })
+        // console.log('from the dboard    '+ JSON.stringify(input))
     }
     nestedMenuItems(list, user) {
         //   leftIcon={<SocialShare/>}
@@ -126,7 +130,8 @@ class DashboardPage extends Component {
                 <div className="row center-xs">
                     <FriendSearch 
                         handleFriendSelection={this.handleFriendSelection} 
-                        user={user}/>
+                        user={user}
+                        list={list}/>
                 </div>
             </ListItem>
         ]);
@@ -188,7 +193,8 @@ class DashboardPage extends Component {
                 key: uuid.v4(),
                 name: listName,
             }
-            base.post(`${user.uid}/lists/${list.key}`, {
+            // ${user.uid}/lists/${list.key}
+            base.post(`${user.uid}/lists/`, {
                 data: {name: listName, dateCreated: Date.now()},
                 then()  {
                     context.props.router.push({ pathname: 'create-list', state: list});

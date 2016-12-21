@@ -34,30 +34,31 @@ class FriendSearch extends Component {
             showFindFriendForm: false,
             searchResults: [],
             selectedFriend: '',
-            dataSource: []
+            dataSource: [],
+            user: this.props.user,
         }
         this.isUnmounted = false;
     }
     componentDidMount() {
-            const {user} = this.props;
+        const {user} = this.props;
         base.fetch('users', {
             context: this,
             asArray: true,
         }).then(data => {
-                   const dataSource = data.filter(i => i.email !== user.email )
-                     .map(i => { 
-                         return (
-                         {
-                            text: i.email.toLowerCase(),
-                            value: (
-                            <MenuItem
-                                primaryText={i.email}
-                                secondaryText="&#9786;"
-                                onTouchTap={()=>this.onSelectFriend(i)}
-                            />
-                            ),
-                        }
-                     )});
+            const dataSource = data
+                .filter(i => i.email !== user.email )
+                .map(i => (
+                    {
+                        text: i.email.toLowerCase(),
+                        value: (
+                        <MenuItem
+                            primaryText={i.email}
+                            secondaryText="&#9786;"
+                            onTouchTap={()=>this.onSelectFriend(i)}
+                        />
+                        ),
+                    }
+                ));
                 if(!this.isUnmounted) {
                     this.setState({
                         dataSource 
@@ -65,7 +66,7 @@ class FriendSearch extends Component {
                         // showFindFriendForm: false,
                     });
                 }
-        }).catch(error => console.error(error))
+        }).catch(error => console.error(error));
     }
     componentWillUnmount() {
         this.isUnmounted = true;
@@ -82,7 +83,26 @@ class FriendSearch extends Component {
     }
     handleFriendSubmit(e) {
         e.preventDefault();
-        this.props.handleFriendSelection(this.state.selectedFriend)
+        const {selectedFriend, user} = this.state;
+        const {key} = this.props.list;
+        base.fetch(`${selectedFriend.key}/shared/`, {
+            context: this,
+            asArray: true
+        }).then(data => {
+                console.log(data);
+        }).catch(error => {
+                //handle error
+        });
+        
+        // base.push(`${selectedFriend.key}/shared/`, {
+        //         data: {friend: user.email, key: user.uid,},
+        // }).then(data => {
+        //     base.push(`${selectedFriend.key}/shared/lists/`, {
+        //         data: {index: key},
+        //     });
+        // }).catch(err => console.error(err));
+        // consol
+        //this.props.handleFriendSelection(this.state.selectedFriend)
         // console.log(this.state.selectedFriend)
     }
     render () {
