@@ -1,28 +1,28 @@
 import React, {Component} from 'react';
-import uuid from 'node-uuid'; 
+// import uuid from 'node-uuid'; 
 
-import {
-    EditorFormatListBulleted, 
-    ContentCreate,
-    NavigationMoreVert,
-    ActionDelete,
-    SocialPersonAdd,
-    } from 'material-ui/svg-icons';  
+// import {
+//     EditorFormatListBulleted, 
+//     ContentCreate,
+//     NavigationMoreVert,
+//     ActionDelete,
+//     SocialPersonAdd,
+//     } from 'material-ui/svg-icons';  
 import {
         AutoComplete,
-        Dialog,
-        Divider,
-        FlatButton,
-        IconButton,
-        IconMenu,
-        List,
-        ListItem,
-        MenuItem,
-        Paper,
-        RaisedButton,
-        TextField, } from 'material-ui';
 
-import styles from '../IconStyles';
+        FlatButton,
+        // IconButton,
+        // IconMenu,
+        // List,
+        // ListItem,
+        // MenuItem,
+        // Paper,
+        // RaisedButton,
+        // TextField,
+     } from 'material-ui';
+
+// import styles from '../IconStyles';
 import autobind from 'react-autobind';
 
 import base from '../Rebase.config';
@@ -85,11 +85,24 @@ class FriendSearch extends Component {
         e.preventDefault();
         const {selectedFriend, user} = this.state;
         const {key} = this.props.list;
+        console.log(` list key is === ${key}`)
         base.fetch(`${selectedFriend.key}/shared/`, {
             context: this,
             asArray: true
         }).then(data => {
                 console.log(data);
+                const result = data.filter(i => i.key === selectedFriend.key);
+                // if(result.length) {
+
+                // } else {
+                // }
+                    base.post(`${selectedFriend.key}/shared/${user.uid}/`, {
+                        data: {friend: user.email},
+                    }).then(data => {
+                        base.push(`${selectedFriend.key}/shared/${user.uid}/lists`, {
+                            data: {index: key},
+                        });
+                    })
         }).catch(error => {
                 //handle error
         });

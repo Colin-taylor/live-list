@@ -32,12 +32,7 @@ class HomePage extends Component {
         if (result.credential) {
           // This gives you a Google Access Token. You can use it to access the Google API.
           var token = result.credential.accessToken;
-          var {email} = result.user;
-          const user = {
-              token,
-              email
-          }
-          console.log(`there was a user:::   ${JSON.stringify(result.user)}`)
+        //   var {email} = result.user;
           resolve(result.user)
         } else {
             reject('not logged in')
@@ -47,18 +42,13 @@ class HomePage extends Component {
         // var user = result.user;
       }).catch(function(error) {
         // Handle Errors here.
-        var errorCode = error.code;
+        // var errorCode = error.code;
         // var errorMessage = error.message;
         // The email of the user's account used.
     
-        // [START_EXCLUDE]
-        if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert('You have already signed up with a different auth provider for that email.');
-          // If you are using multiple auth providers on your app you should handle linking
-          // the user's accounts here.
-        } else {
-          console.error(error);
-        }
+    
+        console.error(error);
+    
         reject(error)
         // [END_EXCLUDE]
       });

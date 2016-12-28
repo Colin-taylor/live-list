@@ -1,20 +1,20 @@
 import React, {Component} from 'react';
 // import auth from '../auth';
-import colors from '../muiBasePalette';
+// import colors from '../muiBasePalette';
 import uuid from 'node-uuid'; 
 import FriendSearch from './FriendSearch';
+import SharedLists from './SharedLists';
 import firebase from 'firebase';
 
 import {
-    EditorFormatListBulleted, 
+    //EditorFormatListBulleted, 
     ContentCreate,
     NavigationMoreVert,
     NavigationClose,
-    ActionDelete,
-    SocialShare,
-    SocialPersonAdd,
+
     } from 'material-ui/svg-icons';  
-import {Avatar,
+import {
+        //Avatar,
         Dialog,
         Divider,
         FlatButton,
@@ -78,6 +78,7 @@ class DashboardPage extends Component {
         } else {
             this.syncState();
         }
+        window.addEventListener('onbeforeunload', this.closeAnyOpenItems);
     }
     syncState() {
         if(!this.hasStateSynced) {
@@ -89,14 +90,25 @@ class DashboardPage extends Component {
                         state: 'lists',
                         asArray: true,
                         then() {
-                            this.setState({ loading: false });
                             //const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
+                            this.setState({ loading: false });
                         }
-                    });
+            });
         }
     }
     componentWillUnmount(){
+        window.removeEventListener('onbeforeunload', this.closeAnyOpenItems);
+        this.closeAnyOpenItems();
         base.removeBinding(this.ref);
+    }
+    closeAnyOpenItems() {
+        this.setState({
+            lists: this.state.lists.map(list => {
+                list.isOpen = false;
+                return list;
+            }),
+        })
+
     }
     
     deleteActions() {
@@ -161,7 +173,7 @@ class DashboardPage extends Component {
         return (
             <IconMenu iconButtonElement={iconButtonElement}>
                 <MenuItem onTouchTap={() => this.openMenuItemToShare(item)}>Share</MenuItem>
-                <MenuItem onTouchTap={() => this.setState({deleteDialogOpen: true, item})}>Delete</MenuItem>
+                <MenuItem onTouchTap={() => this.setState({deleteDialogOpen: true, itemToDelete: item})}>Delete</MenuItem>
             </IconMenu>
         );
     }
@@ -194,7 +206,7 @@ class DashboardPage extends Component {
                 name: listName,
             }
             // ${user.uid}/lists/${list.key}
-            base.post(`${user.uid}/lists/`, {
+            base.push(`${user.uid}/lists/`, {
                 data: {name: listName, dateCreated: Date.now()},
                 then()  {
                     context.props.router.push({ pathname: 'create-list', state: list});
@@ -256,7 +268,7 @@ class DashboardPage extends Component {
                     <ListItem 
                         key={uuid.v4()}
                         nestedItems={this.nestedMenuItems(list,user)}
-                        onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list})}
+                        onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list })}
                         open={list.isOpen}
                         primaryText={list.name}
                         rightIconButton={this.rightIconMenu(list)}
@@ -268,6 +280,10 @@ class DashboardPage extends Component {
              {!loading && !lists.length ? <h4>You have no lists.</h4> : undefined}
         </div>
         </section>
+        <div className="col-xs-12">
+          {user ? <SharedLists user={user}/> : undefined}
+            
+        </div>
         
           <Dialog
           actions={this.deleteActions()}
