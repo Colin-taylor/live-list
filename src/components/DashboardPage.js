@@ -280,10 +280,10 @@ class DashboardPage extends Component {
              {!loading && !lists.length ? <h4>You have no lists.</h4> : undefined}
         </div>
         </section>
-        <div className="col-xs-12">
-          {user ? <SharedLists user={user}/> : undefined}
+        <section className="row center-xs">
+          {user ? <SharedLists router={this.props.router} user={user}/> : undefined}
             
-        </div>
+        </section>
         
           <Dialog
           actions={this.deleteActions()}

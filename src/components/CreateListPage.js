@@ -34,13 +34,15 @@ class CreateListPage extends Component {
     }
 
     componentDidMount() {
+        const {list} = this.state;
         firebase.auth().onAuthStateChanged(user => {
             
             if (user) {
                 this.setState({
                     user
                 });
-             this.ref = base.syncState(`${user.uid}/lists/${this.state.list.key}/items`, {
+            const owner = list.owner || user.uid;
+             this.ref = base.syncState(`${owner}/lists/${list.key}/items`, {
                     context: this,
                     state: 'items',
                     asArray: true,
@@ -95,7 +97,7 @@ class CreateListPage extends Component {
     
     render () {
         const {items, list} = this.state;
-        console.log('list is;;;;;'+list)
+        
         return (
             <div>
                 <div className="row center-xs">

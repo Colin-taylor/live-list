@@ -35,9 +35,12 @@ class ShoppingList extends Component {
                     return (
                     <ListItem
                     key={index}
-                    leftCheckbox={<Checkbox />}
+                    leftCheckbox={<Checkbox 
+                        onClick={ () => this.onCheckClick(item) }
+                        checked={item.completed}
+                        />}
                     primaryText={item.name}
-                    rightIconButton={<IconButton onClick={()=> this.onDeleteClick(item)}>
+                    rightIconButton={<IconButton onClick={ () => this.onDeleteClick(item) }>
                                         <Delete/>
                                     </IconButton>}
                 />

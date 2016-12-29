@@ -16,7 +16,7 @@ import {
         // IconMenu,
         // List,
         // ListItem,
-        // MenuItem,
+        MenuItem,
         // Paper,
         // RaisedButton,
         // TextField,
@@ -92,14 +92,10 @@ class FriendSearch extends Component {
         }).then(data => {
                 console.log(data);
                 const result = data.filter(i => i.key === selectedFriend.key);
-                // if(result.length) {
-
-                // } else {
-                // }
                     base.post(`${selectedFriend.key}/shared/${user.uid}/`, {
                         data: {friend: user.email},
                     }).then(data => {
-                        base.push(`${selectedFriend.key}/shared/${user.uid}/lists`, {
+                        base.push(`${selectedFriend.key}/shared/${user.uid}/lists/`, {
                             data: {index: key},
                         });
                     })

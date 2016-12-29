@@ -1,24 +1,21 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import base from '../Rebase.config';
 import {
-        
-        Dialog,
-        Divider,
-        FlatButton,
-        IconButton,
-        IconMenu,
-        LinearProgress,
-        List,
-        ListItem,
-        MenuItem,
-        Paper,
-        RaisedButton,
-        TextField, } from 'material-ui';
+    // Dialog,
+    Divider,
+    LinearProgress,
+    List,
+    ListItem,
+    Paper,
+} from 'material-ui';
 class SharedLists extends Component {
-    state = {
-        shared: [],
-        loading: true,
-        
+    constructor(props) {
+        super(props);
+        this.state = {
+            shared: [],
+            loading: true,
+
+        }
     }
     componentWillMount() {
         const {user} = this.props;
@@ -28,25 +25,36 @@ class SharedLists extends Component {
             state: 'shared',
             asArray: true,
             then() {
-                //const sorted = this.state.lists.sort((a,b) => a.dateCreated + b.dateCreated);
                 this.setState({ loading: false });
-                
+
             }
         }).then(data => {
             console.log('friedns list   ' + JSON.stringify(data))
-            const indexArr = data.lists.map(i => i.index);
-            console.log(indexArr)
-            base.fetch(`${key}/lists`, {
-                context: this,
-                asArray: true,
-            });
-            // const shared = data.map(i => {
-            //     const listItem = {
-            //         friend: i.friend,
-
-            //     }
-            // })
-        });
+            const listAggregator = [];
+            // data is an array: 💾💾💾
+            // [{"friend":"colinrileytaylor@gmail.com",
+            // "lists":{"-KZxr6n1W9pb3hGPWKe4":{"index":"1"}},
+            // "key":"KGLroDMwOOatxjEkDygfHs1kmHN2"}]
+            data.forEach(i => {
+                const listIndexArray = Object.keys(i.lists)
+                    .map(key => i.lists[key].index)
+                    .map(index => parseInt(index));
+                base.fetch(`${i.key}/lists`, {
+                    context: this,
+                    asArray: true,
+                }).then(data => {
+                    console.log(`data is::: ${JSON.stringify(data[1])}`)
+                    const sharedListsFromOneFriend = listIndexArray.map(index => {
+                        data[index].owner = i.key;
+                        return data[index];
+                    });
+                    listAggregator.push(...sharedListsFromOneFriend)
+                    
+                });
+            })
+            // temporary hack
+            setTimeout(() => this.setState({ shared: listAggregator }), 500);
+        }).catch(err => console.error(err));
     } 
     render () {
         const {loading, shared, user} = this.state;
