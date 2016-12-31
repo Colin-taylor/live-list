@@ -59,7 +59,7 @@ class SharedLists extends Component {
     render () {
         const {loading, shared, user} = this.state;
         return (
-        <div className="col-xs-12 col-lg-6">
+        <div className="m-t-5">
          {loading ? <LinearProgress mode="indeterminate" /> : undefined}
             {shared.length ?
             <Paper zDepth={1}>

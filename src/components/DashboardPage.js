@@ -231,11 +231,9 @@ class DashboardPage extends Component {
                 <section className="row center-xs">
                     <h1 className="text-center">DashboardPage</h1>
                 </section>
-                <section className="row center-xs">
-           
-                </section>
-                <section className="row center-xs">
-                <div className="col-xs-12 col-lg-6">
+
+            <section className="row center-xs">
+                <div className="col-xs-12 col-lg-2">
                     <IconButton
                             iconStyle={styles.largeIcon}
                             onClick={() => this.setState({ showForm: !showForm})} 
@@ -257,33 +255,33 @@ class DashboardPage extends Component {
 
                         
                 </div>
-        <div className="col-xs-12 col-lg-6">
-         {loading ? <LinearProgress mode="indeterminate" /> : undefined}
-            {lists.length ?
-            <Paper zDepth={1}>
-            <List>
-                <h4>Your Lists</h4>
-                <Divider/>
-                {lists.map(list => (
-                    <ListItem 
-                        key={uuid.v4()}
-                        nestedItems={this.nestedMenuItems(list,user)}
-                        onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list })}
-                        open={list.isOpen}
-                        primaryText={list.name}
-                        rightIconButton={this.rightIconMenu(list)}
-                    />
-                ))}
-            </List>
-            </Paper>
-             : undefined}
-             {!loading && !lists.length ? <h4>You have no lists.</h4> : undefined}
-        </div>
+                <div className="col-xs-12 col-lg-6">
+                {loading ? <LinearProgress mode="indeterminate" /> : undefined}
+                    {lists.length ?
+                    <Paper zDepth={1}>
+                    <List>
+                        <h4>Your Lists</h4>
+                        <Divider/>
+                        {lists.map(list => (
+                            <ListItem 
+                                key={uuid.v4()}
+                                nestedItems={this.nestedMenuItems(list,user)}
+                                onTouchTap={() => this.props.router.push({ pathname: 'create-list', state: list })}
+                                open={list.isOpen}
+                                primaryText={list.name}
+                                rightIconButton={this.rightIconMenu(list)}
+                            />
+                        ))}
+                    </List>
+                    </Paper>
+                    : undefined}
+                    {!loading && !lists.length ? <h4>You have no lists.</h4> : undefined}
+                    
+                    {user ? <SharedLists router={this.props.router} user={user}/> : undefined}
+                </div>
+                
         </section>
-        <section className="row center-xs">
-          {user ? <SharedLists router={this.props.router} user={user}/> : undefined}
-            
-        </section>
+        
         
           <Dialog
           actions={this.deleteActions()}
