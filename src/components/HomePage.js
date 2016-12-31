@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import IconButton from 'material-ui/IconButton';
+import {Dialog, FlatButton, IconButton} from 'material-ui';
 import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
 import base from '../Rebase.config';
@@ -14,10 +14,13 @@ class HomePage extends Component {
     constructor(props) {
         super(props);
         autoBind(this);
-        
+        this.state = {
+            open: false,
+            error: ''
+        };
+        this.providers = ['google', 'github', 'twitter'];
     }
     componentWillMount() {
-        console.log('hello')
         this.initApp().then(user => this.addUserObj(user)); 
     }
     componentDidMount() {
@@ -39,18 +42,18 @@ class HomePage extends Component {
         }
         // The signed-in user info.
         // var user = result.user;
-      }).catch(function(error) {
+      }).catch(error => {
         // Handle Errors here.
         // var errorCode = error.code;
         // var errorMessage = error.message;
         // The email of the user's account used.
     
-    
-        console.error(error);
+        this.openDialog(error.message)
+        
     
         reject(error)
-        // [END_EXCLUDE]
-      });
+        
+        });
       })
     }
     addUserObj(user) {
@@ -65,26 +68,72 @@ class HomePage extends Component {
         } 
         });
     }
-    onSignUpClick() { 
-        var provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('https://www.googleapis.com/auth/plus.login');
+    onSignUpClick(type) {
+        let provider;
+        switch (type) {
+            case 'google':
+                provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('https://www.googleapis.com/auth/plus.login');
+                break;
+            case 'github':
+                provider = new firebase.auth.GithubAuthProvider();
+                provider.addScope('repo');
+                break;
+            case 'twitter':
+                provider =  new firebase.auth.TwitterAuthProvider();
+                break;
+            default:
+                console.error('no type provided!')
+                break;
+        } 
 
         firebase.auth().signInWithRedirect(provider);
     }
+ 
+    openDialog(error) {
+        this.setState({ 
+            open: true,
+            error,
+         });
+    }
+    handleClose() {
+        this.setState({ 
+            open: false,
+            error: '',
+         });
+    }
     render() {
+        
         return (
 
             <div className="content center-xs">
                 <h1>🦄🦄🦄🦄</h1>
-                <h3>Sign in with Google</h3>
-                    <IconButton iconClassName="fa fa-google"
-                    iconStyle={styles.largeIcon}
-                    onClick={this.onSignUpClick}
-                    >
-                </IconButton>
-
-
+                <div className="row center-xs">
+                {this.providers.map( p => (
+                    <div className="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <IconButton iconClassName={`fa fa-${p}`}
+                            iconStyle={styles.largeIcon}
+                            onClick={() => this.onSignUpClick(p)}
+                            />
+                        <h3>Sign in with {p}</h3>
+                    </div>
+                ))}
+                </div>
+                <Dialog
+                    title="Error"
+                    actions={[<FlatButton
+                                label="Close"
+                                primary={true}
+                                keyboardFocused={true}
+                                onTouchTap={this.handleClose} />
+                             ]}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                >
+                {this.state.error}
+                </Dialog>
             </div>
 
         )
