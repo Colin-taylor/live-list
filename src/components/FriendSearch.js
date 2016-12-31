@@ -91,7 +91,7 @@ class FriendSearch extends Component {
             asArray: true
         }).then(data => {
                 console.log(data);
-                const result = data.filter(i => i.key === selectedFriend.key);
+                //const result = data.filter(i => i.key === selectedFriend.key);
                     base.post(`${selectedFriend.key}/shared/${user.uid}/`, {
                         data: {friend: user.email},
                     }).then(data => {
@@ -102,17 +102,7 @@ class FriendSearch extends Component {
         }).catch(error => {
                 //handle error
         });
-        
-        // base.push(`${selectedFriend.key}/shared/`, {
-        //         data: {friend: user.email, key: user.uid,},
-        // }).then(data => {
-        //     base.push(`${selectedFriend.key}/shared/lists/`, {
-        //         data: {index: key},
-        //     });
-        // }).catch(err => console.error(err));
-        // consol
-        //this.props.handleFriendSelection(this.state.selectedFriend)
-        // console.log(this.state.selectedFriend)
+
     }
     render () {
         return (

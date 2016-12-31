@@ -38,7 +38,7 @@ class SharedLists extends Component {
             data.forEach(i => {
                 const listIndexArray = Object.keys(i.lists)
                     .map(key => i.lists[key].index)
-                    .map(index => parseInt(index));
+                    .map(index => Number(index));
                 base.fetch(`${i.key}/lists`, {
                     context: this,
                     asArray: true,
@@ -57,7 +57,7 @@ class SharedLists extends Component {
         }).catch(err => console.error(err));
     } 
     render () {
-        const {loading, shared, user} = this.state;
+        const {loading, shared} = this.state;
         return (
         <div className="m-t-5">
          {loading ? <LinearProgress mode="indeterminate" /> : undefined}

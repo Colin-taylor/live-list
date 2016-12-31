@@ -1,17 +1,14 @@
 import React, {Component} from 'react';
-// import auth from '../auth';
-// import colors from '../muiBasePalette';
+
 import uuid from 'node-uuid'; 
 import FriendSearch from './FriendSearch';
 import SharedLists from './SharedLists';
 import firebase from 'firebase';
 
 import {
-    //EditorFormatListBulleted, 
     ContentCreate,
     NavigationMoreVert,
     NavigationClose,
-
     } from 'material-ui/svg-icons';  
 import {
         //Avatar,

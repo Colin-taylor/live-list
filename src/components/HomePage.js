@@ -31,8 +31,7 @@ class HomePage extends Component {
         firebase.auth().getRedirectResult().then(function(result) {
         if (result.credential) {
           // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
-        //   var {email} = result.user;
+     
           resolve(result.user)
         } else {
             reject('not logged in')
@@ -56,7 +55,7 @@ class HomePage extends Component {
     }
     addUserObj(user) {
         let context = this;
-        let {email, uid} = user; 
+        let {uid} = user; 
         base.post(`users/${uid}`, {
             data: {email: user.email},
             then(err){
