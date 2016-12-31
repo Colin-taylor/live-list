@@ -9,9 +9,11 @@ import {
     CardTitle,
     Divider,
     FlatButton,
+    LinearProgress,
     TextField,
+    Snackbar,
 } from 'material-ui';
-
+import {ActionCheckCircle} from 'material-ui/svg-icons';
 import ShoppingList from './ShoppingList';
 import autobind from 'react-autobind';
 import firebase from 'firebase';
@@ -27,6 +29,8 @@ class CreateListPage extends Component {
             errorText: '',
             list: this.props.location.state,
             user: '',
+            snackOpen: false,
+            loading: true,
         };
         this.db = firebase.database();
         console.log('listname is' + JSON.stringify(this.state.list))
@@ -46,7 +50,10 @@ class CreateListPage extends Component {
                     context: this,
                     state: 'items',
                     asArray: true,
-                });
+                    then() {
+                        this.setState({ loading: false });
+                    }
+                })
             };
         });
     }
@@ -64,6 +71,7 @@ class CreateListPage extends Component {
             this.setState({
                 items: this.state.items.concat(newItem),
                 itemToAdd: '',
+                snackOpen: true,
             });
         } else {
             this.setState({
@@ -96,7 +104,7 @@ class CreateListPage extends Component {
     }
     
     render () {
-        const {items, list} = this.state;
+        const {items, list, loading} = this.state;
         
         return (
             <div>
@@ -123,6 +131,7 @@ class CreateListPage extends Component {
                     </aside>
                     <main className="col-xs-12 col-md-8">
                         <div className="row center-xs">
+                            {loading ? <LinearProgress mode="indeterminate" /> : undefined}
                             {items.length ? 
                             (<ShoppingList 
                                 items={items}
@@ -133,7 +142,12 @@ class CreateListPage extends Component {
                         </div>
                     </main>
                 </div>
-                
+                   <Snackbar
+                    open={this.state.snackOpen}
+                    message={<span className="row between-xs middle-xs"><ActionCheckCircle style={{fill:'#00E676'}}/>Item added to your list</span>}
+                    autoHideDuration={4000}
+                    onRequestClose={() => this.setState({ snackOpen: false })}
+                />
             </div>
         )
     }

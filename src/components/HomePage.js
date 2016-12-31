@@ -110,8 +110,8 @@ class HomePage extends Component {
             <div className="content center-xs">
                 <h1>🦄🦄🦄🦄</h1>
                 <div className="row center-xs">
-                {this.providers.map( p => (
-                    <div className="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                {this.providers.map( (p, i) => (
+                    <div className="col-lg-4 col-md-6 col-sm-12 col-xs-12" key={i}>
                             <IconButton iconClassName={`fa fa-${p}`}
                             iconStyle={styles.largeIcon}
                             onClick={() => this.onSignUpClick(p)}
