@@ -53,7 +53,12 @@ class SharedLists extends Component {
                 });
             })
             // temporary hack
+            this.listAggregator = listAggregator;
             setTimeout(() => this.setState({ shared: listAggregator }), 500);
+            if(listAggregator) return listAggregator;
+            
+        }).then((something) => {
+            console.log(`something is    ${this.listAggregator}`)
         }).catch(err => console.error(err));
     } 
     render () {
