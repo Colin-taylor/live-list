@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import {Dialog, FlatButton, IconButton} from 'material-ui';
+import { IconButton } from 'material-ui';
 import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
 import base from '../Rebase.config';
+import ErrorMessage from './ErrorMessage';
 const styles = {
     largeIcon: {
         fontSize: '3rem',
@@ -120,20 +121,11 @@ class HomePage extends Component {
                     </div>
                 ))}
                 </div>
-                <Dialog
-                    title="Error"
-                    actions={[<FlatButton
-                                label="Close"
-                                primary={true}
-                                keyboardFocused={true}
-                                onTouchTap={this.handleClose} />
-                             ]}
-                    modal={false}
-                    open={this.state.open}
-                    onRequestClose={this.handleClose}
-                >
-                {this.state.error}
-                </Dialog>
+                <ErrorMessage 
+                handleClose={this.handleClose} 
+                open={this.state.open}
+                text={this.state.error}/> 
+                
             </div>
 
         )
