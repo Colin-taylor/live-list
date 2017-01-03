@@ -83,6 +83,7 @@ class CreateListPage extends Component {
         this.setState({
             itemToAdd: e.target.value,
             errorText: '',
+            snackOpen: false,
         });
     }
     onDelete(item) {
@@ -90,6 +91,9 @@ class CreateListPage extends Component {
         this.setState({
             items: filteredItems,
         });
+    }
+    closeSnackBar() {
+        this.setState({ snackOpen: false });
     }
     onCheck(item) {
         const items = this.state.items.map(elem => {
@@ -146,7 +150,7 @@ class CreateListPage extends Component {
                     open={this.state.snackOpen}
                     message={<span className="row between-xs middle-xs"><ActionCheckCircle style={{fill:'#00E676'}}/>Item added to your list</span>}
                     autoHideDuration={4000}
-                    onRequestClose={() => this.setState({ snackOpen: false })}
+                    onRequestClose={this.closeSnackBar}
                 />
             </div>
         )
