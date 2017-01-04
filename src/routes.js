@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, IndexRoute } from 'react-router'
+import { browserHistory, Route, Router, IndexRoute } from 'react-router'
 import App from './App'
 import HomePage from './components/HomePage';
 import CoursesPage from './components/CoursesPage';
@@ -12,11 +12,13 @@ import requireAuth from './auth';
 import Rebase from './Rebase.config';
 
 export default (
-    <Route path="/" component={App}> 
-        <IndexRoute component={HomePage}/>
-        <Route path="dashboard" component={DashboardPage} onEnter={requireAuth}/>
-        <Route path="courses" component={CoursesPage}/>
-        <Route path="logout" component={LogOutPage}/>
-        <Route path="create-list" component={CreateListPage}/>
-    </Route>
+    <Router history={browserHistory}>
+        <Route path="/" component={App}> 
+            <IndexRoute component={HomePage}/>
+            <Route path="dashboard" component={DashboardPage} onEnter={requireAuth}/>
+            <Route path="courses" component={CoursesPage}/>
+            <Route path="logout" component={LogOutPage}/>
+            <Route path="create-list" component={CreateListPage}/>
+        </Route>
+    </Router>
 )

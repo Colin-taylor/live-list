@@ -133,7 +133,7 @@ class DashboardPage extends Component {
         //   leftIcon={<SocialShare/>}
         return ([
             <ListItem key={uuid.v4()}  
-                      rightIconButton={<IconButton onClick={() => this.editMenuOpen(list, false)}>
+                      rightIconButton={<IconButton onClick={(e) => this.editMenuOpen(list, false,e)}>
                                             <NavigationClose />
                                         </IconButton>}>
                 <div className="row center-xs">
@@ -145,7 +145,8 @@ class DashboardPage extends Component {
             </ListItem>
         ]);
     }
-    editMenuOpen(item, bool){
+    editMenuOpen(item, bool, e){
+        e.preventDefault();
         const {lists} = this.state;
         
         this.setState({

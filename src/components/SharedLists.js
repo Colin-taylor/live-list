@@ -44,16 +44,18 @@ class SharedLists extends Component {
                     context: this,
                     asArray: true,
                 }).then(listData => {
-                    const sharedListsFromOneFriend = listIndexArray.map(index => {
-                        listData[index].owner = i.key;
-                        return listData[index];
-                    });
-                    listAggregator.push(...sharedListsFromOneFriend);
-                    //  hack should only run once
-                    if(dataIndex === data.length - 1) {
-                        this.setState({
-                            shared: this.state.shared.concat(sharedListsFromOneFriend),
+                    if(listData) {                        
+                        const sharedListsFromOneFriend = listIndexArray.map(index => {
+                            listData[index].owner = i.key;
+                            return listData[index];
                         });
+                        listAggregator.push(...sharedListsFromOneFriend);
+                        //  hack should only run once
+                        if(dataIndex === data.length - 1) {
+                            this.setState({
+                                shared: this.state.shared.concat(sharedListsFromOneFriend),
+                            });
+                        }
                     }
                 });
             })
