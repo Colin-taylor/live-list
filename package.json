@@ -44,6 +44,7 @@
     "sass-loader": "^4.0.2",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
+    "sw-precache": "4.3.0",
     "url-loader": "0.5.7",
     "webpack": "1.13.2",
     "webpack-dev-server": "1.16.2",
@@ -64,7 +65,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js && sw-precache --config=sw-precache-config.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "sw": "sw-precache --config=sw-precache-config.js"
   },
   "eslintConfig": {
     "extends": "react-app"
