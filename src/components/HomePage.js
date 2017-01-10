@@ -4,6 +4,7 @@ import firebase from 'firebase/app';
 import autoBind from 'react-autobind';
 import base from '../Rebase.config';
 import ErrorMessage from './ErrorMessage';
+import TopBanner from './TopBanner';
 const styles = {
     largeIcon: {
         fontSize: '3rem',
