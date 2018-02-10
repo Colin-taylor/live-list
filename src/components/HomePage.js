@@ -18,7 +18,8 @@ class HomePage extends Component {
         autoBind(this);
         this.state = {
             open: false,
-            error: ''
+            error: '',
+            hilariousJoke: null
         };
         this.providers = ['google', 'github', 'twitter'];
     }
